@@ -1,0 +1,47 @@
+{
+    "interactionModel": {
+      "languageModel": {
+        "invocationName": "products list",
+        "intents": [
+           {
+            "name": "AMAZON.StopIntent",
+            "samples": []
+            },
+            {
+            "name": "AMAZON.CancelIntent",
+            "samples": []
+            },
+            {
+            "name": "AMAZON.HelpIntent",
+            "samples": []
+            },
+            {
+              "name": "CheckProductAvailabilityIntent",
+              "slots": [
+                {
+                  "name": "ProductName",
+                  "type": "AMAZON.SearchQuery"
+                }
+              ],
+              "samples": [
+                "is {ProductName} available",
+                "check if {ProductName} is in stock",
+                "do you have {ProductName}",
+                "is {ProductName} in the database",
+                "check availability of {ProductName}"
+              ]
+            },
+            {
+              "name": "ListAllProductsIntent",
+              "samples": [
+                "list all products",
+                "what products are available",
+                "tell me the available products",
+                "what items do you have",
+                "show me all products"
+              ]
+            }
+        ]
+      }
+    }
+  }

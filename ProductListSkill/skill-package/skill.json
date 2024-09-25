@@ -1,0 +1,35 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "name": "Product List Skill",
+          "summary": "A Product list consulting for Alexa.",
+          "description": "A Product list consulting for Alexa.",
+          "examplePhrases": [
+            "Alexa, open products list",
+            "Alexa, What are the products available?"
+          ]
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "You can test the skill by asking Alexa to list the available products.",
+      "category": "SHOPPING"
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "arn:aws:lambda:<region>:<account-id>:function:productlistskill"
+        }
+      }
+    },
+    "permissions": [],
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "usesPersonalInfo": false,
+      "isChildDirected": false,
+      "isExportCompliant": true,
+      "containsAds": false
+    }
+  }
+}
