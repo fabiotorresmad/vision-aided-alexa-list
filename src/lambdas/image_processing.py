@@ -7,9 +7,10 @@ import base64
 
 LOG = logging.getLogger(__name__)
 model = os.getenv("MODEL")
-rekognition = boto3.client("rekognition")
-dynamodb = boto3.client("dynamodb")
+dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table("ProductsList")
+rekognition = boto3.client("rekognition")
+
 LABELS = [
     "club-social-purple",
     "club-social-red",
