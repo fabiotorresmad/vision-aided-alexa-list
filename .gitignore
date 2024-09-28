@@ -1,1 +1,6 @@
 docs/article/build
+.env
+venv
+*.jpg
+*.jpeg
+*.png
