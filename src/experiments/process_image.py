@@ -85,4 +85,4 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    main(args.model, args.min_confindence, args.img_fp)
+    main(args.model, args.min_confidence, args.img_fp)
