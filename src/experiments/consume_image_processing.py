@@ -18,7 +18,7 @@ lambda_client = boto3.client(
 )
 
 # Replace with the name of your Lambda function
-function_name = "myFunctionName"
+function_name = "image-processing"
 
 
 def analyze_image_local(img_path):
