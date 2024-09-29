@@ -32,14 +32,14 @@ class CheckProductAvailabilityIntentHandler(AbstractRequestHandler):
                 quantity = response['Item'].get('Quantity', 'unknown quantity')
                 category = response['Item'].get('Category', 'unknown category')
                 if locale.startswith("pt"):
-                    speech_text = f"sim, tem {product_name}. da {brand}, temos {quantity} na categoria {category}"
+                    speech_text = f"sim, temos {quantity} unidades {product_name} disponíveis, da marca {brand} , categoria {category}"
                 else:
                     speech_text = f"Yes, {product_name} is available. It is from {brand}, we have {quantity} units in the {category} category."
             else:
                 if locale.startswith("pt"):
-                    speech_text = f"disculpa, nao tem {product_name}"
+                    speech_text = f"Desculpa, {product_name} não está disponível no estoque"
                 else:
-                    speech_text = f"Sorry, {product_name} is not available in the database."
+                    speech_text = f"Sorry, {product_name} is not available in the store."
         except Exception as e:
             if locale.startswith("pt"):
                 speech_text = f"erro verificando {product_name}."
@@ -64,18 +64,19 @@ class ListAllProductsIntentHandler(AbstractRequestHandler):
                 product_names = [item['ProductName'] for item in items]
                 product_list = ', '.join(product_names)
                 if locale.startswith("pt"):
-                    speech_text = f"Os produtos disponiveis sao: {product_list}."
+                    speech_text = f"Os produtos disponíveis são: {product_list}."
                 else:
                     speech_text = f"The available products are: {product_list}."
             else:
                 if locale.startswith("pt"):
-                    speech_text = "Nao tem produtos no momento"
+                    speech_text = "Não há produtos disponíveis no momento"
                 else:
                     speech_text = "There are no products available at the moment."
 
         except Exception as e:
+            logger.error(e, exc_info=True)
             if locale.startswith("pt"):
-                speech_text = "Ups deu erro"
+                speech_text = "Ops, deu erro"
             else:
                 speech_text = "An error occurred while listing the products."
 
@@ -95,7 +96,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         if locale.startswith("en"):
             return "Welcome to Store. You can ask for a specific item, category or brand."
         elif locale.startswith("pt"):
-            return "Benvindo na loja"
+            return "Bem vindo à loja"
         # Add more languages as needed
         else:
             return "Welcome to Store. You can ask for a specific item, category or brand."
@@ -115,8 +116,12 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
         return True
 
     def handle(self, handler_input, exception):
+        locale = handler_input.request_envelope.request.locale
         logger.error(exception, exc_info=True)
-        speak_output = "Sorry, I had trouble doing what you asked. Please try again."
+        if locale.startswith("en"):
+            speak_output = "Sorry, I had trouble doing what you asked. Please try again."
+        if locale.startswith("pt"):
+            speak_output = "Desculpa, não consegui entender. Tente novamente, por favor."
         return handler_input.response_builder.speak(speak_output).ask(speak_output).response
 
 sb.add_exception_handler(CatchAllExceptionHandler())
