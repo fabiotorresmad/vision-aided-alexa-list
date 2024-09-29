@@ -2,7 +2,7 @@ src/skills/ProductListSkill/.ask
 docs/article/build
 .env
 venv
-*.jpg
+#*.jpg
 *.jpeg
 *.png
 *.zip
@@ -183,3 +183,4 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 src/skills/ProductListSkill/lambda/package/
+datasets
