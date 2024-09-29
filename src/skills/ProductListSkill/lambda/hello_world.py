@@ -27,9 +27,9 @@ class CheckProductAvailabilityIntentHandler(AbstractRequestHandler):
         locale = handler_input.request_envelope.request.locale
         response = table.get_item(Key={'ProductName': product_name})
         try:
-            if 'Item' in response:
+            quantity = response['Item'].get('Quantity', '0')
+            if 'Item' in response and int(quantity) > 0:
                 brand = response['Item'].get('Brand', 'unknown brand')
-                quantity = response['Item'].get('Quantity', 'unknown quantity')
                 category = response['Item'].get('Category', 'unknown category')
                 if locale.startswith("pt"):
                     speech_text = f"sim, temos {quantity} unidades {product_name} disponíveis, da marca {brand} , categoria {category}"
