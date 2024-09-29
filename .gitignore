@@ -1,6 +1,6 @@
 src/skills/ProductListSkill/.ask
 docs/article/build
-.env
+*.env
 venv
 #*.jpg
 *.jpeg
