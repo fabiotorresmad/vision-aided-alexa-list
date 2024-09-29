@@ -47,6 +47,57 @@ class CheckProductAvailabilityIntentHandler(AbstractRequestHandler):
                 speech_text = f"An error occurred while checking availability for {product_name}."
         return handler_input.response_builder.speak(speech_text).response
 
+# Handler for CheckBrandIntent
+class CheckBrandIntentHandler(AbstractRequestHandler):
+    """Handler for CheckBrandIntent."""
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name("CheckBrandIntent")(handler_input)
+    
+    def handle(self, handler_input):
+        locale = handler_input.request_envelope.request.locale
+        # Scan the table for all products
+        try:
+            response = table.scan()
+            brand = handler_input.request_envelope.request.intent.slots['Brand'].value
+            items = response.get('Items', [])
+            product_names = []
+
+            if items:
+                has_item = False
+                for item in items:
+                    logger.info(msg= item)
+                    logger.info(msg= brand)
+                    logger.info(msg= item['Brand'])
+                    if item['Brand'] == brand:
+                        has_item = True
+                        product_names.append(item['ProductName'])
+                product_list = ', '.join(product_names)
+                if has_item == True:
+                    if locale.startswith("pt"):
+                        speech_text = f"Os produtos da marca {brand} disponíveis são: {product_list}."
+                    else:
+                        speech_text = f"The available products from brand {brand} are: {product_list}."
+                else:
+                    if locale.startswith("pt"):
+                        speech_text = f"Não há produtos da marca {brand} disponíveis."
+                    else:
+                        speech_text = f"There are no available products from brand {brand}."
+            else:
+                if locale.startswith("pt"):
+                    speech_text = "Não há produtos disponíveis no momento"
+                else:
+                    speech_text = "There are no products available at the moment."
+
+        except Exception as e:
+            logger.error(e, exc_info=True)
+            if locale.startswith("pt"):
+                speech_text = "Ops, deu erro"
+            else:
+                speech_text = "An error occurred while listing the products."
+
+        return handler_input.response_builder.speak(speech_text).response
+    
+
 # Handler for ListAllProductsIntent
 class ListAllProductsIntentHandler(AbstractRequestHandler):
     """Handler for ListAllProductsIntent."""
@@ -109,6 +160,7 @@ sb = SkillBuilder()
 sb.add_request_handler(CheckProductAvailabilityIntentHandler())
 sb.add_request_handler(ListAllProductsIntentHandler())
 sb.add_request_handler(LaunchRequestHandler())
+sb.add_request_handler(CheckBrandIntentHandler())
 
 # Add exception handler
 class CatchAllExceptionHandler(AbstractExceptionHandler):
