@@ -10,6 +10,15 @@
             "Alexa, open mini market",
             "Alexa, What are the products available?"
           ]
+        },
+        "pt-BR": {
+          "name": "Mini Mercado skill",
+          "summary": "Consulta de lista de produtos para Alexa.",
+          "description": "Consulta de lista de produtos para Alexa.",
+          "examplePhrases": [
+            "Alexa, Abra o mini market",
+            "Alexa, quais são os produtos disponíveis?"
+          ]
         }
       },
       "isAvailableWorldwide": true,
