@@ -18,18 +18,25 @@ def display_image(img_fp, response):
     # calculate and display bounding boxes for each detected custom label
     print("Detected custom labels for ")
     for customLabel in response["CustomLabels"]:
-        print("Label " + str(customLabel["Name"]))
-        print("Confidence " + str(customLabel["Confidence"]))
         if "Geometry" in customLabel:
             box = customLabel["Geometry"]["BoundingBox"]
             left = imgWidth * box["Left"]
             top = imgHeight * box["Top"]
             width = imgWidth * box["Width"]
             height = imgHeight * box["Height"]
-            print("Left: " + "{0:.0f}".format(left))
-            print("Top: " + "{0:.0f}".format(top))
-            print("Label Width: " + "{0:.0f}".format(width))
-            print("Label Height: " + "{0:.0f}".format(height))
+
+            area = height*width
+            if area > 500000:
+                continue
+            if area < 20000:
+                continue
+            print(f"{customLabel['Name']}: {customLabel['Confidence']:0.2f}")
+            print(f"{area=}")
+
+            # print("Left: " + "{0:.0f}".format(left))
+            # print("Top: " + "{0:.0f}".format(top))
+            # print("Label Width: " + "{0:.0f}".format(width))
+            # print("Label Height: " + "{0:.0f}".format(height))
 
             points = (
                 (left, top),
@@ -38,12 +45,12 @@ def display_image(img_fp, response):
                 (left, top + height),
                 (left, top),
             )
-            draw.line(points, fill="#00d400", width=40)
+            draw.line(points, fill="#00d400", width=10)
             draw.text(
                 (left, top),
                 customLabel["Name"],
-                fill="#000000",
-                font=ImageFont.load_default(size=100),
+                fill="#ff0000",
+                font=ImageFont.load_default(size=50),
             )
     image.show()
 

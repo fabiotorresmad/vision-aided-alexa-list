@@ -52,7 +52,7 @@ def process_image(event):
     try:
         response = rekognition.detect_custom_labels(
             Image={"Bytes": image},
-            MinConfidence=44,
+            MinConfidence=40,
             ProjectVersionArn=model,
         )
     except ClientError as client_err:
@@ -60,7 +60,11 @@ def process_image(event):
             "Couldn't analyze image: " + client_err.response["Error"]["Message"]
         )
     labels = [
-        {"name": label["Name"], "confidence": label["Confidence"]}
+        {
+            "name": label["Name"],
+            "confidence": label["Confidence"],
+            "area": label["Geometry"]["BoundingBox"]["Width"]*label["Geometry"]["BoundingBox"]["Height"],
+        }
         for label in response["CustomLabels"]
     ]
     return labels
@@ -71,6 +75,10 @@ def update_db(labels):
     # count labels and update db
     products = {name: 0 for name in LABELS}
     for label in labels:
+        if label["area"] > 500_000:
+            continue
+        if label["area"] < 20_000:
+            continue
         if label["name"] in products:
             products[label["name"]] += 1
 
