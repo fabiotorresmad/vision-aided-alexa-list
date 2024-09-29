@@ -24,17 +24,27 @@ class CheckProductAvailabilityIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         product_name = handler_input.request_envelope.request.intent.slots['ProductName'].value
+        locale = handler_input.request_envelope.request.locale
         response = table.get_item(Key={'ProductName': product_name})
         try:
             if 'Item' in response:
                 brand = response['Item'].get('Brand', 'unknown brand')
                 quantity = response['Item'].get('Quantity', 'unknown quantity')
                 category = response['Item'].get('Category', 'unknown category')
-                speech_text = f"Yes, {product_name} is available. It is from {brand}, we have {quantity} units in the {category} category."
+                if locale.startswith("pt"):
+                    speech_text = f"sim, tem {product_name}. da {brand}, temos {quantity} na categoria {category}"
+                else:
+                    speech_text = f"Yes, {product_name} is available. It is from {brand}, we have {quantity} units in the {category} category."
             else:
-                speech_text = f"Sorry, {product_name} is not available in the database."
+                if locale.startswith("pt"):
+                    speech_text = f"disculpa, nao tem {product_name}"
+                else:
+                    speech_text = f"Sorry, {product_name} is not available in the database."
         except Exception as e:
-            speech_text = f"An error occurred while checking availability for {product_name}."
+            if locale.startswith("pt"):
+                speech_text = f"erro verificando {product_name}."
+            else:
+                speech_text = f"An error occurred while checking availability for {product_name}."
         return handler_input.response_builder.speak(speech_text).response
 
 # Handler for ListAllProductsIntent
@@ -44,21 +54,31 @@ class ListAllProductsIntentHandler(AbstractRequestHandler):
         return ask_utils.is_intent_name("ListAllProductsIntent")(handler_input)
 
     def handle(self, handler_input):
+        locale = handler_input.request_envelope.request.locale
         # Scan the table for all products
         try:
             response = table.scan()
             items = response.get('Items', [])
-            
+
             if items:
                 product_names = [item['ProductName'] for item in items]
                 product_list = ', '.join(product_names)
-                speech_text = f"The available products are: {product_list}."
+                if locale.startswith("pt"):
+                    speech_text = f"Os produtos disponiveis sao: {product_list}."
+                else:
+                    speech_text = f"The available products are: {product_list}."
             else:
-                speech_text = "There are no products available at the moment."
-        
+                if locale.startswith("pt"):
+                    speech_text = "Nao tem produtos no momento"
+                else:
+                    speech_text = "There are no products available at the moment."
+
         except Exception as e:
-            speech_text = "An error occurred while listing the products."
-    
+            if locale.startswith("pt"):
+                speech_text = "Ups deu erro"
+            else:
+                speech_text = "An error occurred while listing the products."
+
         return handler_input.response_builder.speak(speech_text).response
 
 # Handler for LaunchRequest (initial welcome message)
@@ -67,8 +87,19 @@ class LaunchRequestHandler(AbstractRequestHandler):
         return ask_utils.is_request_type("LaunchRequest")(handler_input)
 
     def handle(self, handler_input):
-        speak_output = "Welcome to Store. You can ask for a specific item, category or brand"
+        locale = handler_input.request_envelope.request.locale
+        speak_output = self.get_speak_output(locale)
         return handler_input.response_builder.speak(speak_output).ask(speak_output).response
+
+    def get_speak_output(self, locale):
+        if locale.startswith("en"):
+            return "Welcome to Store. You can ask for a specific item, category or brand."
+        elif locale.startswith("pt"):
+            return "Benvindo na loja"
+        # Add more languages as needed
+        else:
+            return "Welcome to Store. You can ask for a specific item, category or brand."
+
 
 # General SkillBuilder configuration
 sb = SkillBuilder()

@@ -1,0 +1,47 @@
+{
+    "interactionModel": {
+      "languageModel": {
+        "invocationName": "mini market",
+        "intents": [
+           {
+            "name": "AMAZON.StopIntent",
+            "samples": []
+            },
+            {
+            "name": "AMAZON.CancelIntent",
+            "samples": []
+            },
+            {
+            "name": "AMAZON.HelpIntent",
+            "samples": []
+            },
+            {
+              "name": "CheckProductAvailabilityIntent",
+              "slots": [
+                {
+                  "name": "ProductName",
+                  "type": "AMAZON.SearchQuery"
+                }
+              ],
+              "samples": [
+                "tem {ProductName} disponivel",
+                "verifica se tem {ProductName} em estoque",
+                "você tem {ProductName}",
+                "tem {ProductName} no banco de dados",
+                "verificar disponibilidade de {ProductName}"
+              ]
+            },
+            {
+              "name": "ListAllProductsIntent",
+              "samples": [
+                "listar todos os produtos",
+                "quais produtos estão disponíveis",
+                "me diga os produtos disponíveis",
+                "que itens você tem",
+                "mostre-me todos os produtos"
+              ]
+            }
+        ]
+      }
+    }
+  }
