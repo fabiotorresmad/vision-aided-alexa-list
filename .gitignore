@@ -1,9 +1,9 @@
 docs/article/build
 .env
 venv
-#*.jpg
+*.jpg
 *.jpeg
-#*.png
+*.png
 *.zip
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
