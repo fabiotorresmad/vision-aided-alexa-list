@@ -4,7 +4,9 @@
 \usepackage{graphicx,url}
 \usepackage[utf8]{inputenc}
 \usepackage[brazil]{babel}
-\usepackage[latin1]{inputenc}
+\usepackage{listings}
+%\usepackage[latin1]{inputenc}
+\usepackage{titlesec}
 
 
 \sloppy
@@ -14,7 +16,7 @@
 \author{
   Joseph A. P. Quino\inst{1},
   Fabio A. T. Madueno\inst{1},
-  Jonathan\inst{1},
+  Jonathan N. Santos\inst{1},
 }
 
 
@@ -25,6 +27,16 @@
 
 \begin{document}
 
+\lstset{
+    basicstyle=\ttfamily\footnotesize,  % Font and size
+    breaklines=true,                    % Line break if the line is too long
+    frame=single,                       % Draw a frame around the code
+    captionpos=b,                       % Caption position at the bottom
+    xleftmargin=2em,                    % Indentation of the code block
+    framexleftmargin=1.5em              % Frame left margin
+}
+
+
 \maketitle
 
 \input{chapters/01-abstract}
@@ -33,7 +45,6 @@
 \input{chapters/04-results}
 \input{chapters/05-conclusion}
 
-\section{References}
 \bibliographystyle{sbc}
 % \bibliography{references/refs}
 
@@ -58,5 +69,188 @@ Wang, X., et al. (2022). AI-Powered Vision Systems for Retail: A Review of Image
 Chen, Y., \& Patel, R. (2023). Cloud Computing and Visual Recognition in Retail Environments. \textit{Journal of Cloud Technologies}, 10(5), 78-92.
 
 \end{thebibliography}
+
+\appendix
+
+\newpage
+
+\section{Alexa Skill Files}
+
+\subsection{Skill Interaction Model} \label{appendix:interaction}
+\begin{lstlisting}
+{
+   "interactionModel": {
+     "languageModel": {
+       "invocationName": "products list",
+       "intents": [
+          {
+           "name": "AMAZON.StopIntent",
+           "samples": []
+           },
+           {
+           "name": "AMAZON.CancelIntent",
+           "samples": []
+           },
+           {
+           "name": "AMAZON.HelpIntent",
+           "samples": []
+           },
+           {
+             "name": "CheckProductAvailabilityIntent",
+             "slots": [
+               {
+                 "name": "ProductName",
+                 "type": "AMAZON.SearchQuery"
+               }
+             ],
+             "samples": [
+               "is {ProductName} available",
+               "check if {ProductName} is in stock",
+               "do you have {ProductName}",
+               "is {ProductName} in the database",
+               "check availability of {ProductName}"
+             ]
+           },
+           {
+             "name": "ListAllProductsIntent",
+             "samples": [
+               "list all products",
+               "what products are available",
+               "tell me the available products",
+               "what items do you have",
+               "show me all products"
+             ]
+           }
+       ]
+     }
+   }
+ }
+\end{lstlisting}
+
+\subsection{Skill Configuration}\label{appendix:skill_config}
+\begin{lstlisting}
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "name": "Product List Skill",
+          "summary": "A Product list consulting for Alexa.",
+          "description": "A Product list consulting for Alexa.",
+          "examplePhrases": [
+            "Alexa, open products list",
+            "Alexa, What are the products available?"
+          ]
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "You can test the skill by asking Alexa to list the available products.",
+      "category": "SHOPPING"
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "arn:aws:lambda:<region>:<account-id>:function:productlistskill"
+        }
+      }
+    },
+    "permissions": [],
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "usesPersonalInfo": false,
+      "isChildDirected": false,
+      "isExportCompliant": true,
+      "containsAds": false
+    }
+  }
+}
+\end{lstlisting}
+
+\subsection{Skill Lambda Function}\label{appendix:lambda}
+\begin{lstlisting}
+# -*- coding: utf-8 -*-
+import logging
+from ask_sdk_core.skill_builder import SkillBuilder
+from ask_sdk_core.dispatch_components import AbstractRequestHandler, AbstractExceptionHandler
+import ask_sdk_core.utils as ask_utils
+from ask_sdk_core.handler_input import HandlerInput
+from ask_sdk_model import Response
+import boto3
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
+# Initialize the DynamoDB resource
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('ProductsList')
+
+# Handler for CheckProductAvailabilityIntent
+class CheckProductAvailabilityIntentHandler(AbstractRequestHandler):
+    """Handler for CheckProductAvailabilityIntent."""
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name("CheckProductAvailabilityIntent")(handler_input)
+
+    def handle(self, handler_input):
+        product_name = handler_input.request_envelope.request.intent.slots['ProductName'].value
+        response = table.get_item(Key={'ProductName': product_name})
+        try:
+            if 'Item' in response:
+                brand = response['Item'].get('Brand', 'unknown brand')
+                quantity = response['Item'].get('Quantity', 'unknown quantity')
+                category = response['Item'].get('Category', 'unknown category')
+                speech_text = f"Yes, {product_name} is available. It is from {brand}, we have {quantity} units in the {category} category."
+            else:
+                speech_text = f"Sorry, {product_name} is not available in the database."
+        except Exception as e:
+            speech_text = f"An error occurred while checking availability for {product_name}."
+        return handler_input.response_builder.speak(speech_text).response
+
+# Handler for ListAllProductsIntent
+class ListAllProductsIntentHandler(AbstractRequestHandler):
+    """Handler for ListAllProductsIntent."""
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name("ListAllProductsIntent")(handler_input)
+
+    def handle(self, handler_input):
+        try:
+            response = table.scan()
+            items = response.get('Items', [])
+            
+            if items:
+                product_names = [item['ProductName'] for item in items]
+                product_list = ', '.join(product_names)
+                speech_text = f"The available products are: {product_list}."
+            else:
+                speech_text = "There are no products available at the moment."
+        except Exception as e:
+            speech_text = "An error occurred while listing the products."
+    
+        return handler_input.response_builder.speak(speech_text).response
+
+# General SkillBuilder configuration
+sb = SkillBuilder()
+
+# Add custom handlers for intents
+sb.add_request_handler(CheckProductAvailabilityIntentHandler())
+sb.add_request_handler(ListAllProductsIntentHandler())
+
+# Exception handler
+class CatchAllExceptionHandler(AbstractExceptionHandler):
+    def can_handle(self, handler_input, exception):
+        return True
+
+    def handle(self, handler_input, exception):
+        logger.error(exception, exc_info=True)
+        speak_output = "Sorry, I had trouble doing what you asked. Please try again."
+        return handler_input.response_builder.speak(speak_output).ask(speak_output).response
+
+sb.add_exception_handler(CatchAllExceptionHandler())
+
+# The Lambda handler
+handler = sb.lambda_handler()
+\end{lstlisting}
+
 
 \end{document}
