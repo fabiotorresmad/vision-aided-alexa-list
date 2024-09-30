@@ -34,7 +34,13 @@ Access to the table is done via AWS Lambda functions, both for reading and writi
 
 \subsection{Product Recognition with Amazon Rekognition}
 
-\textit{(TBD)}
+For product recognition using Amazon Rekognition, it is necessary to create a dataset using an S3 bucket to train the model that will identify the products. Once the dataset is created, we configure SageMaker, where labels will be generated for each product. These labels will be used to identify the products in each image within the dataset.
+
+Next, the model will be trained using Amazon Rekognition Custom Labels. The labeled images from SageMaker Ground Truth will be imported through the manifest file location that was provided when the S3 bucket was created.
+
+Once the model training is complete, the model will be deployed using Lambda. To achieve this, the commands listed in Appendix \ref{appendix:recognition_lambda} must be executed using the AWS CLI.
+
+
 
 \subsection{Alexa Skill Integration}
 

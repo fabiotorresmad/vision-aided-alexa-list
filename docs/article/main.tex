@@ -74,6 +74,34 @@ Chen, Y., \& Patel, R. (2023). Cloud Computing and Visual Recognition in Retail 
 
 \newpage
 
+\section{Amazon Rekognition Commands}
+
+\subsection{Rekognition Lambda Function}\label{appendix:recognition_lambda}
+\begin{lstlisting}
+export LAMBDA_ROLE="" # here setup the arn role you are using
+
+export MODEL=""  # here paste the model arn
+
+# Zip file before uploading
+zip --junk-paths /tmp/image_processing.zip src/lambdas/image_processing.py
+
+# Create Lambda function
+aws lambda create-function \
+    --function-name image-processing \
+    --runtime python3.12 \
+    --role ${LAMBDA_ROLE} \
+    --handler image_processing.lambda_handler \
+    --zip-file fileb:///tmp/image_processing.zip
+
+
+# Update Lambda environment variables
+aws lambda update-function-configuration \
+    --function-name image-processing \
+    --environment Variables="{MODEL=${MODEL}}" \
+    --timeout 60
+\end{lstlisting}
+
+
 \section{Alexa Skill Files}
 
 \subsection{Skill Interaction Model} \label{appendix:interaction}
