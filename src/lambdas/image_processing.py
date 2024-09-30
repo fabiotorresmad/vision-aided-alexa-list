@@ -75,10 +75,10 @@ def update_db(labels):
     # count labels and update db
     products = {name: 0 for name in LABELS}
     for label in labels:
-        if label["area"] > 500_000:
-            continue
-        if label["area"] < 20_000:
-            continue
+        # if label["area"] > 500_000:
+        #     continue
+        # if label["area"] < 20_000:
+        #     continue
         if label["name"] in products:
             products[label["name"]] += 1
 
