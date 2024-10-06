@@ -3,9 +3,9 @@
     "publishingInformation": {
       "locales": {
         "en-US": {
-          "name": "Product List Skill",
-          "summary": "A Product list consulting for Alexa.",
-          "description": "A Product list consulting for Alexa.",
+          "name": "Mini Market Skill",
+          "summary": "A mini market consulting for Alexa.",
+          "description": "A mini market consulting for Alexa.",
           "examplePhrases": [
             "Alexa, open mini market",
             "Alexa, What are the products available?"
