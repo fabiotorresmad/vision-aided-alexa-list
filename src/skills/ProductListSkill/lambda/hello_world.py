@@ -52,7 +52,7 @@ class CheckBrandIntentHandler(AbstractRequestHandler):
     """Handler for CheckBrandIntent."""
     def can_handle(self, handler_input):
         return ask_utils.is_intent_name("CheckBrandIntent")(handler_input)
-    
+
     def handle(self, handler_input):
         locale = handler_input.request_envelope.request.locale
         # Scan the table for all products
@@ -96,7 +96,7 @@ class CheckBrandIntentHandler(AbstractRequestHandler):
                 speech_text = "An error occurred while listing the products."
 
         return handler_input.response_builder.speak(speech_text).response
-    
+
 
 # Handler for ListAllProductsIntent
 class ListAllProductsIntentHandler(AbstractRequestHandler):
