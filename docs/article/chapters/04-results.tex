@@ -1,1 +1,29 @@
 \section{Results}
+
+This section presents the results obtained during the model's training process, where key metrics such as accuracy, precision, and recall were evaluated across three distinct scenarios: basic, intermediate, and advanced. Additionally, the implementation cost of AWS services is analyzed.
+
+
+\subsection{Model metrics}
+
+\subsubsection{Train model}
+
+\subsubsection{Basic scenario}
+
+In the basic scenario, the model was evaluated using a straightforward dataset, where it achieved an accuracy of X\%. This scenario serves as a benchmark for the model's baseline performance under minimal complexity.
+
+\subsubsection{Intermediate scenario}
+
+In the intermediate scenario, a moderately complex dataset was used to test the model's ability to handle more nuanced inputs. The model demonstrated improved performance with an accuracy of X\%, reflecting its capacity to generalize beyond simple patterns.
+
+\subsubsection{Advanced scenario}
+
+For the advanced scenario, the model was tested on a highly complex dataset that included challenging cases and edge conditions. The accuracy achieved in this scenario was X\%, showcasing the model's robustness and scalability when faced with real-world complexities.
+
+\subsection{Cost implementation}
+
+The cost analysis for the system was performed by considering various AWS services used in the deployment and training phases. The initial cost totaled \$ 4.76, which covered SageMaker and Rekognition training expenses. SageMaker incurred a one-time cost of \$ 3.76 for processing 47 images, and Rekognition training required 30 minutes at \$ 2/hour, amounting to \$ 1. Other services, such as Lambda (for both the Alexa skill and computer vision), S3 storage, and DynamoDB, had no initial cost due to the minimal usage during the initial phase.
+
+The daily operating cost was primarily driven by Rekognition inference, which incurred \$ 96 per day for continuous usage. Other services, such as Lambda, S3, and DynamoDB, had negligible or no significant daily costs, as the usage remained within free tiers or minimal limits.
+
+In summary, the system’s total initial cost was \$ 4.76, with an ongoing daily cost of approximately \$ 96.
+
