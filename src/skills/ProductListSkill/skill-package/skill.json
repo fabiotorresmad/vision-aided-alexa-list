@@ -3,7 +3,7 @@
     "publishingInformation": {
       "locales": {
         "en-US": {
-          "name": "Mini Market Skill",
+          "name": "Mini-market-skill",
           "summary": "A mini market consulting for Alexa.",
           "description": "A mini market consulting for Alexa.",
           "examplePhrases": [
@@ -12,7 +12,7 @@
           ]
         },
         "pt-BR": {
-          "name": "Mini Mercado skill",
+          "name": "Mini-mercado-skill",
           "summary": "Consulta de lista de produtos para Alexa.",
           "description": "Consulta de lista de produtos para Alexa.",
           "examplePhrases": [
