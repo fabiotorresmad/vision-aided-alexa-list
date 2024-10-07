@@ -26,10 +26,10 @@ def display_image(img_fp, response):
             height = imgHeight * box["Height"]
 
             area = height*width
-            if area > 500000:
-                continue
-            if area < 20000:
-                continue
+            # if area > 500000:
+            #     continue
+            # if area < 20000:
+            #     continue
             print(f"{customLabel['Name']}: {customLabel['Confidence']:0.2f}")
             print(f"{area=}")
 
