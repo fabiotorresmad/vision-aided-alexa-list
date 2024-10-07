@@ -24,6 +24,7 @@ class CheckProductAvailabilityIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         product_name = handler_input.request_envelope.request.intent.slots['ProductName'].value
+        product_name = product_name.replace(" ", "-")
         locale = handler_input.request_envelope.request.locale
         response = table.get_item(Key={'ProductName': product_name})
         try:
@@ -52,13 +53,14 @@ class CheckBrandIntentHandler(AbstractRequestHandler):
     """Handler for CheckBrandIntent."""
     def can_handle(self, handler_input):
         return ask_utils.is_intent_name("CheckBrandIntent")(handler_input)
-    
+
     def handle(self, handler_input):
         locale = handler_input.request_envelope.request.locale
         # Scan the table for all products
         try:
             response = table.scan()
             brand = handler_input.request_envelope.request.intent.slots['Brand'].value
+            brand = brand.replace(" ", "-")
             items = response.get('Items', [])
             product_names = []
 
@@ -68,9 +70,9 @@ class CheckBrandIntentHandler(AbstractRequestHandler):
                     logger.info(msg= item)
                     logger.info(msg= brand)
                     logger.info(msg= item['Brand'])
-                    if item['Brand'] == brand:
+                    if item['Brand'] == brand and item["Quantity"] > 0:
                         has_item = True
-                        product_names.append(item['ProductName'])
+                        product_names.append(item['ProductName'].replace(" ", "-"))
                 product_list = ', '.join(product_names)
                 if has_item == True:
                     if locale.startswith("pt"):
@@ -96,7 +98,7 @@ class CheckBrandIntentHandler(AbstractRequestHandler):
                 speech_text = "An error occurred while listing the products."
 
         return handler_input.response_builder.speak(speech_text).response
-    
+
 
 # Handler for ListAllProductsIntent
 class ListAllProductsIntentHandler(AbstractRequestHandler):
@@ -112,7 +114,7 @@ class ListAllProductsIntentHandler(AbstractRequestHandler):
             items = response.get('Items', [])
 
             if items:
-                product_names = [item['ProductName'] for item in items]
+                product_names = [item['ProductName'].replace(" ", "-") for item in items if item.get("Quantity", 0) > 0]
                 product_list = ', '.join(product_names)
                 if locale.startswith("pt"):
                     speech_text = f"Os produtos disponíveis são: {product_list}."

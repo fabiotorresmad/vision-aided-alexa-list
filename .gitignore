@@ -1,4 +1,5 @@
 src/skills/ProductListSkill/.ask
+src/skills/ProductListSkill/skill-package/skill.json
 docs/article/build
 *.env
 venv

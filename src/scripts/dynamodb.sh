@@ -17,3 +17,16 @@ aws dynamodb put-item \
 
 # Read items of table ProductsList in DynamoDB
 aws dynamodb scan --table-name ProductsList
+
+# Remove elements
+aws dynamodb delete-item \
+	--table-name ProductsList \
+	--key '{"ProductName": {"S": "milk"}}'
+
+# Update
+aws dynamodb update-item \
+    --table-name ProductsList \
+    --key '{"ProductName": {"S": "lacta"}}' \
+    --update-expression "SET Brand = :b, Category = :c" \
+    --expression-attribute-values '{":b": {"S": "lacta"}, ":c": {"S": "recheio deliciosamente cremoso"}}'
+

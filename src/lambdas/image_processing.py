@@ -10,6 +10,7 @@ model = os.getenv("MODEL")
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table("ProductsList")
 rekognition = boto3.client("rekognition")
+confidence = int(os.getenv("MIN_CONFIDENCE"))
 
 LABELS = [
     "club-social-purple",
@@ -52,7 +53,7 @@ def process_image(event):
     try:
         response = rekognition.detect_custom_labels(
             Image={"Bytes": image},
-            MinConfidence=40,
+            MinConfidence=confidence,
             ProjectVersionArn=model,
         )
     except ClientError as client_err:
@@ -75,10 +76,6 @@ def update_db(labels):
     # count labels and update db
     products = {name: 0 for name in LABELS}
     for label in labels:
-        # if label["area"] > 500_000:
-        #     continue
-        # if label["area"] < 20_000:
-        #     continue
         if label["name"] in products:
             products[label["name"]] += 1
 

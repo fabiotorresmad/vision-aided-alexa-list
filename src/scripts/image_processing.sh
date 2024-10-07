@@ -1,5 +1,6 @@
 export LAMBDA_ROLE=""
 export MODEL=""
+export MIN_CONFIDENCE=50
 # Zip file before uploading
 zip --junk-paths /tmp/image_processing.zip src/lambdas/image_processing.py
 
@@ -22,3 +23,6 @@ aws lambda update-function-configuration \
    --environment Variables="{MODEL=${MODEL}}" \
    --timeout 60
 
+aws lambda update-function-configuration \
+   --function-name image-processing \
+   --environment Variables="{MIN_CONFIDENCE=${MIN_CONFIDENCE}}"

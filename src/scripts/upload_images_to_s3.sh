@@ -1,4 +1,4 @@
-BUCKETE_NAME="minimarket-dataset"
+export BUCKET_NAME="minimarket-ds"
 # Create a S3 bucket named pd-datasets
 aws s3api create-bucket --bucket ${BUCKET_NAME} --region us-east-1
 # Create two folders in the bucket named test and train
